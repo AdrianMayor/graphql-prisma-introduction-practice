@@ -12,16 +12,148 @@ datasource db {
 
 // aqui creamos la bbdd
 
-model users {
-  id        Int      @id @default(autoincrement())
-  username  String
-  email     String   @unique
-  password  String
-  role      roles    @default(normal)
-  createdAt DateTime @default(now())
+model Users {
+  id Int @id @unique @default(autoincrement())
+
+  idUserOpener     Tickets?       @relation("openerUser")
+  idUserReported   Tickets?       @relation("reportedUser")
+  
+  username         String
+  password         String
+  email            String
+  role             role           @default(NORMAL)
+  registrationCode Int?           @unique
+  active           Boolean        @default(false)
+  activeCode       String?       @unique() // esto no será opcional
+  createdAt        DateTime?      @default(now()) @updatedAt
+  updatedAt        DateTime?      @default(now()) @updatedAt
+  karma            Int?
+  ranking          Int?
+  SocialsOwned     SocialsOwned[]
+  comments         Comments[]
+  commentsVotes    commentVotes[]
+  ticketVotes      ticketVotes[]
 }
 
-enum roles {
-  admin
-  normal
+model Socials {
+  id           Int         @id @unique @default(autoincrement())
+  name         String
+  logo         String
+  SocialsOwned SocialsOwned[]
+  Tickets      Tickets[]
+}
+
+model SocialsOwned {
+  id       Int  @id @unique @default(autoincrement())
+  user     Users   @relation(fields: [idUser], references: [id])
+  idUser   Int
+  social   Socials @relation(fields: [idSocial], references: [id])
+  idSocial Int
+}
+
+model Comments {
+  id            Int         @id @unique @default(autoincrement())
+  ticket        Tickets        @relation(fields: [idTicket], references: [id])
+  idTicket      Int
+  user          Users          @relation(fields: [idUser], references: [id])
+  idUser        Int
+  text          String
+  CreatedAt     DateTime?      @default(now())
+  CommentsVotes commentVotes[]
+}
+
+model Tickets {
+  id Int @id @unique @default(autoincrement())
+
+  openerUser     Users  @relation("openerUser", fields: [openerUserId], references: [id])
+  openerUserId   Int @unique
+  reportedUser   Users  @relation("reportedUser", fields: [reportedUserId], references: [id])
+  reportedUserId Int @unique
+
+  social       Socials       @relation(fields: [idSocial], references: [id])
+  idSocial     Int
+  nestedTo     String
+  category     category
+  title        String
+  description  String?
+  createdAt    DateTime?     @default(now())
+  comments     Comments[]
+  photos       Photos[]
+  ticketsVotes ticketVotes[]
+  tags TagsInTickets[]
+}
+
+model TagsInTickets{
+  id Int    @id @unique @default(autoincrement())
+  tag Tags @relation(fields: [idTag], references: [id])
+  idTag Int
+  ticket Tickets @relation(fields: [idTicket], references: [id])
+  idTicket Int
+}
+
+model Tags {
+  id      Int @id @unique @default(autoincrement())
+  tagName String
+  tagsInTickets TagsInTickets[]
+}
+
+model Photos {
+  id        Int      @id @unique @default(autoincrement())
+  ticket    Tickets     @relation(fields: [idTicket], references: [id])
+  idTicket  Int
+  picName   String
+  createdAt DateTime?   @default(now())
+  metaPhoto metaPhoto[]
+}
+
+model metaPhoto {
+  id                Int    @id @unique @default(autoincrement())
+  photo             Photos    @relation(fields: [idPhoto], references: [id])
+  idPhoto           Int
+  device            String?
+  location          String?
+  copyright         String?
+  creator           String?
+  isEdited          String?
+  photoCreationDate String?
+  keywords          Json?
+  OS                String?
+  OsVersion         String?
+  createdAt         DateTime? @default(now())
+}
+
+model commentVotes {
+  id         Int    @id @unique @default(autoincrement())
+  comment    Comments  @relation(fields: [idComment], references: [id])
+  idComment  Int
+  user       Users     @relation(fields: [idUser], references: [id])
+  idUser     Int
+  vote       Boolean
+  createdAt  DateTime? @default(now())
+  modifiedAt DateTime? @default(now())
+}
+
+model ticketVotes {
+  id         Int    @id @unique @default(autoincrement())
+  ticket     Tickets   @relation(fields: [idTicket], references: [id])
+  idTicket   Int
+  user       Users     @relation(fields: [idUser], references: [id])
+  idUser     Int
+  vote       Boolean?
+  createdAt  DateTime? @default(now())
+  modifiedAt DateTime? @default(now())
+}
+
+enum role {
+  ADMIN
+  NORMAL
+}
+
+enum category {
+  Harassment
+  Bullying
+  FraudScam
+  BackseatSpoiler
+  FakeRumor
+  TauntProvocation
 }
