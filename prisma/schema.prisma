@@ -15,16 +15,17 @@ datasource db {
 model Users {
   id Int @id @unique @default(autoincrement())
 
-  idUserOpener     Tickets?       @relation("openerUser")
-  idUserReported   Tickets?       @relation("reportedUser")
-  
+  idUserOpener   Tickets? @relation("openerUser")
+  idUserReported Tickets? @relation("reportedUser")
+
   username         String
   password         String
   email            String
   role             role           @default(NORMAL)
   registrationCode Int?           @unique
   active           Boolean        @default(false)
-  activeCode       String?       @unique() // esto no será opcional
+  activeCode       String?         @unique()
+  activationDate   DateTime?
   createdAt        DateTime?      @default(now()) @updatedAt
   updatedAt        DateTime?      @default(now()) @updatedAt
   karma            Int?
@@ -36,7 +37,7 @@ model Users {
 }
 
 model Socials {
-  id           Int         @id @unique @default(autoincrement())
+  id           Int            @id @unique @default(autoincrement())
   name         String
   logo         String
   SocialsOwned SocialsOwned[]
@@ -44,7 +45,7 @@ model Socials {
 }
 
 model SocialsOwned {
-  id       Int  @id @unique @default(autoincrement())
+  id       Int     @id @unique @default(autoincrement())
   user     Users   @relation(fields: [idUser], references: [id])
   idUser   Int
   social   Socials @relation(fields: [idSocial], references: [id])
@@ -52,7 +53,7 @@ model SocialsOwned {
 }
 
 model Comments {
-  id            Int         @id @unique @default(autoincrement())
+  id            Int            @id @unique @default(autoincrement())
   ticket        Tickets        @relation(fields: [idTicket], references: [id])
   idTicket      Int
   user          Users          @relation(fields: [idUser], references: [id])
@@ -65,40 +66,40 @@ model Comments {
 model Tickets {
   id Int @id @unique @default(autoincrement())
 
-  openerUser     Users  @relation("openerUser", fields: [openerUserId], references: [id])
-  openerUserId   Int @unique
-  reportedUser   Users  @relation("reportedUser", fields: [reportedUserId], references: [id])
-  reportedUserId Int @unique
+  openerUser     Users @relation("openerUser", fields: [openerUserId], references: [id])
+  openerUserId   Int   @unique
+  reportedUser   Users @relation("reportedUser", fields: [reportedUserId], references: [id])
+  reportedUserId Int   @unique
 
-  social       Socials       @relation(fields: [idSocial], references: [id])
+  social       Socials         @relation(fields: [idSocial], references: [id])
   idSocial     Int
   nestedTo     String
   category     category
   title        String
   description  String?
-  createdAt    DateTime?     @default(now())
+  createdAt    DateTime?       @default(now())
   comments     Comments[]
   photos       Photos[]
   ticketsVotes ticketVotes[]
-  tags TagsInTickets[]
+  tags         TagsInTickets[]
 }
 
-model TagsInTickets{
-  id Int    @id @unique @default(autoincrement())
-  tag Tags @relation(fields: [idTag], references: [id])
-  idTag Int
-  ticket Tickets @relation(fields: [idTicket], references: [id])
+model TagsInTickets {
+  id       Int     @id @unique @default(autoincrement())
+  tag      Tags    @relation(fields: [idTag], references: [id])
+  idTag    Int
+  ticket   Tickets @relation(fields: [idTicket], references: [id])
   idTicket Int
 }
 
 model Tags {
-  id      Int @id @unique @default(autoincrement())
-  tagName String
+  id            Int             @id @unique @default(autoincrement())
+  tagName       String
   tagsInTickets TagsInTickets[]
 }
 
 model Photos {
-  id        Int      @id @unique @default(autoincrement())
+  id        Int         @id @unique @default(autoincrement())
   ticket    Tickets     @relation(fields: [idTicket], references: [id])
   idTicket  Int
   picName   String
@@ -107,7 +108,7 @@ model Photos {
 }
 
 model metaPhoto {
-  id                Int    @id @unique @default(autoincrement())
+  id                Int       @id @unique @default(autoincrement())
   photo             Photos    @relation(fields: [idPhoto], references: [id])
   idPhoto           Int
   device            String?
@@ -123,7 +124,7 @@ model metaPhoto {
 }
 
 model commentVotes {
-  id         Int    @id @unique @default(autoincrement())
+  id         Int       @id @unique @default(autoincrement())
   comment    Comments  @relation(fields: [idComment], references: [id])
   idComment  Int
   user       Users     @relation(fields: [idUser], references: [id])
@@ -134,7 +135,7 @@ model commentVotes {
 }
 
 model ticketVotes {
-  id         Int    @id @unique @default(autoincrement())
+  id         Int       @id @unique @default(autoincrement())
   ticket     Tickets   @relation(fields: [idTicket], references: [id])
   idTicket   Int
   user       Users     @relation(fields: [idUser], references: [id])

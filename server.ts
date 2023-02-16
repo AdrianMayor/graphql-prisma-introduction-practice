@@ -2,7 +2,7 @@ const express = require("express");
 import { NextFunction, Request, Response } from "express";
 const { ApolloServer } = require("apollo-server-express");
 const { resolvers } = require("./resolvers");
-const typeDefs = require("./typeDefs");
+const { typeDefs } = require("./typeDefs");
 
 const app = express();
 
@@ -28,6 +28,7 @@ const startServer = async () => {
     });
   });
 
+  // Ponemos el servidor a escuchar peticiones
   app.listen(4000, () => {
     console.log("Server listening at port http://localhost:4000");
   });
