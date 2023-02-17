@@ -1,19 +1,21 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export const getAllUsers = async () => {
-  const users = await prisma.users.findMany({
+export const getUserById = async (_: unknown, { id }: { id: string }) => {
+  const idUser = parseInt(id);
+
+  const user = await prisma.users.findUnique({
+    where: {
+      id: idUser,
+    },
     select: {
       id: true,
       username: true,
       email: true,
       role: true,
       createdAt: true,
-      active: true,
-      activeCode: true,
-      activationDate: true,
     },
   });
 
-  return users;
+  return user;
 };
