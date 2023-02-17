@@ -10,13 +10,17 @@ import { userInput } from "./interfaces/userInput.model";
 interface customErrorArgs {
   msg: string;
   statusCode: number;
-  code: string;
+  customCode: string;
 }
 
-export const generateError = ({ msg, statusCode, code }: customErrorArgs) => {
+export const generateError = ({
+  msg,
+  statusCode,
+  customCode,
+}: customErrorArgs) => {
   throw new GraphQLError(msg, {
     extensions: {
-      code: code,
+      customCode: customCode,
       statusCode: statusCode,
     },
   });
@@ -34,6 +38,6 @@ export const validateSchema = async (schema: any, data: userInput) => {
     generateError({
       msg: validation.error.message,
       statusCode: 400,
-      code: "BAD_USER_INPUT",
+      customCode: "BAD_USER_INPUT",
     });
 };

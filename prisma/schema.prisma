@@ -20,11 +20,11 @@ model Users {
 
   username         String
   password         String
-  email            String
+  email            String         @unique
   role             role           @default(NORMAL)
-  registrationCode Int?           @unique
+  registrationCode String?        @unique
   active           Boolean        @default(false)
-  activeCode       String?         @unique()
+  activeCode       String?        @unique()
   activationDate   DateTime?
   createdAt        DateTime?      @default(now()) @updatedAt
   updatedAt        DateTime?      @default(now()) @updatedAt
