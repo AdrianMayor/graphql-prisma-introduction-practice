@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { userInput } from "./interfaces/userInput.model";
+import { newUserInput } from "./interfaces/newUserInput.model";
 
 /**
  * ####################
@@ -32,7 +32,7 @@ export const generateError = ({
  * #####################
  */
 
-export const validateSchema = async (schema: any, data: userInput) => {
+export const validateSchema = async (schema: any, data: newUserInput) => {
   const validation = schema.validate(data);
   if (validation.error)
     generateError({
