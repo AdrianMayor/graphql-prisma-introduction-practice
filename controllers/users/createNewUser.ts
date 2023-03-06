@@ -2,14 +2,14 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import { generateError, validateSchema } from "../../helpers";
-import { userInput } from "../../interfaces/userInput.model";
+import { newUserInput } from "../../interfaces/newUserInput.model";
 import { createNewUserSchema } from "../../schemas/createNewUserSchema";
 
 const prisma = new PrismaClient();
 
 export const createNewUser = async (
   _: unknown,
-  { user }: { user: userInput }
+  { user }: { user: newUserInput }
 ) => {
   // Si falta algun campo, lanamos error
   if (!user.username || !user.password || !user.email)

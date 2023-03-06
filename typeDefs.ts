@@ -2,6 +2,7 @@ const { gql } = require("apollo-server-express");
 
 export const typeDefs = gql`
   scalar DateTime
+  scalar Upload
 
   type User {
     id: ID!
@@ -19,12 +20,21 @@ export const typeDefs = gql`
     modifiedAt: DateTime
   }
 
+  enum category {
+    Harassment
+    Bullying
+    FraudScam
+    BackseatSpoiler
+    FakeRumor
+    TauntProvocation
+  }
+
   type Ticket {
     id: ID!
     idUserOpener: String!
     idUserReported: String!
     idSocial: String!
-    category: String!
+    category: category!
     nestedTo: String!
     title: String!
     description: String
@@ -37,13 +47,30 @@ export const typeDefs = gql`
     loginUser(email: String!, password: String!): String
   }
 
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+  }
+
   input newUserInput {
     username: String!
     password: String!
     email: String!
   }
 
+  input newTicketInput {
+    idUserReported: String!
+    idSocial: String!
+    category: String!
+    title: String!
+    description: String
+    tags: String
+  }
+
   type Mutation {
     createNewUser(user: newUserInput!): String
+    createNewTicket(ticket: newTicketInput!): String
+    uploadPhotos(file: Upload!): File!
   }
 `;

@@ -1,5 +1,12 @@
 import { ApolloServer } from "apollo-server-express";
 import express, { NextFunction, Request, Response } from "express";
+
+//import  graphqlUploadExpress  from 'graphqlUploadExpress.ts';
+
+const {
+  graphqlUploadExpress,
+} = require("graphql-upload/graphqlUploadExpress.mjs");
+
 import { resolvers } from "./resolvers";
 import { typeDefs } from "./typeDefs";
 
@@ -10,7 +17,10 @@ const startServer = async () => {
   const apolloServer = new ApolloServer({
     typeDefs, // Los esquemas se encargan de decidir que campos podemos seleccionar y que devolver.
     resolvers, // Conjunto de funciones que interactuaran con la bbdd (similar a controladores de express)
+    csrfPrevention: true,
   });
+
+  app.use(graphqlUploadExpress());
 
   await apolloServer.start(); // Es obligatorio esperar a montar primero el servidor de apollo para lanzar despues el de express
 
